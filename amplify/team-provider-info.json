@@ -1,0 +1,20 @@
+{
+    "hk": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-humankindusers-hk-140118-authRole",
+            "UnauthRoleArn": "arn:aws:iam::205633066632:role/amplify-humankindusers-hk-140118-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::205633066632:role/amplify-humankindusers-hk-140118-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "amplify-humankindusers-hk-140118-deployment",
+            "UnauthRoleName": "amplify-humankindusers-hk-140118-unauthRole",
+            "StackName": "amplify-humankindusers-hk-140118",
+            "StackId": "arn:aws:cloudformation:us-east-2:205633066632:stack/amplify-humankindusers-hk-140118/18677510-8d68-11ea-abc0-060a55e3d44e",
+            "AmplifyAppId": "d39n3qqxd87r1a"
+        },
+        "categories": {
+            "auth": {
+                "cognitod07a9e3c": {}
+            }
+        }
+    }
+}
