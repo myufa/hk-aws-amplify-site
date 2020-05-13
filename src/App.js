@@ -44,17 +44,17 @@ class App extends Component {
     .catch((err)=>{console.log("ftechlist error", err);});  
     this.setState({ list: [...response] });  
   }
-  loadDetailsPage = async id => {    
-    const response = await API.get("UserApi", "/items/" + id)
-    .catch((err)=>{console.log("details error: ", err);});
-    this.setState({ item: { ...response }, showDetails: true });  
-  };
+  // loadDetailsPage = async id => {    
+  //   const response = await API.get("UserApi", "/items/" + id)
+  //   .catch((err)=>{console.log("details error: ", err);});
+  //   this.setState({ item: { ...response }, showDetails: true });  
+  // };
   loadListPage = () => {    
     this.setState({ showDetails: false });  
   };
   delete = async id => {    
-    await API.del("UserApi", "/items/" + id);
-    this.loadListPage()
+    await API.del("UserApi", "/items/object/" + id);
+    this.fetchList();
   };
   render() {    
     return (      
@@ -62,7 +62,7 @@ class App extends Component {
         <form onSubmit={this.handleSubmit}>          
           <legend>Add</legend>          
           <div className="form-group">            
-            <label htmlFor="name">name</label>            
+            <label htmlFor="name">Name</label>            
             <input type="text" className="form-control" id="name" placeholder="name" value={this.state.name} onChange={this.handleChange}/>
           </div>          
           <div className="form-group"> 
@@ -72,7 +72,7 @@ class App extends Component {
           <button type="submit" className="btn btn-primary">Submit</button>        
         </form>
         <hr/>
-        <List list={this.state.list} loadDetailsPage={this.loadDetailsPage} delete={this.delete} />
+        <List list={this.state.list} delete={this.delete} />
       </div>    
     );  
   }
