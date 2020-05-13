@@ -1,4 +1,4 @@
-This is an aws amplify project for displaying a database of volunteers for [HumanKind MI](humankindmi.com)
+This is an aws amplify project for displaying a database of volunteers for [HumanKind MI](https://humankindmi.com)
 
 ### `Key features`
 - Users are created from aws cognito console, user accounts cannot be made by any unauthorized person
