@@ -42,14 +42,19 @@ class App extends Component {
   async fetchList() {    
     const response = await API.get("UserApi", "/items")
     .catch((err)=>{console.log("ftechlist error", err);});  
-    this.setState({ list: [...response] });  
+    if (response){
+      this.setState({ list: [...response] });  
+    }
   }
   async fetchFormData(){
     await API.get("UserApi", "/form-data")
     .then((res)=>{
+      console.log("res")
+      console.log(res)
       return res.formData
     })
     .catch((err)=>{
+      console.log("error fetching form data")
       return ["error getting form data"]
     });
   }
@@ -82,14 +87,29 @@ class App extends Component {
         </form>
         <hr/>
         <List list={this.state.list} delete={this.delete} />
-        
+        {this.fetchFormData()}
       </div>    
     );  
   }
 }
 
 
-
+{/* <table>
+          <tr> <th>Timestamp</th> <th>Email Address</th> <th>First name</th> <th>Last name</th> <th>Which university do you attend?</th> <th>What year are you?</th> <th>Why are you interested in becoming a member of HumanKind?</th> </tr>
+          {
+          this.fetchFormData().map((row)=>{
+            return (
+              <tr>
+                {row.map((item)=>{
+                  return (
+                    <td>item</td>
+                  );
+                })}
+              </tr>
+            );
+          })
+          }
+        </table> */}
 
 
 
