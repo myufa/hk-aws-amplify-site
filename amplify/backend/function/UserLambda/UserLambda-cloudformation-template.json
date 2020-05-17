@@ -82,7 +82,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-humankindusers-hk-140118-deployment",
-					"S3Key": "amplify-builds/UserLambda-6c634c516c4a6b345549-build.zip"
+					"S3Key": "amplify-builds/UserLambda-41675453756156694655-build.zip"
 				}
 			}
 		},

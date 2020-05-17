@@ -17,6 +17,7 @@ const AWS = require('aws-sdk')
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
+var collector = require('./formData')
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -70,6 +71,11 @@ app.get(path, function(req, res) {
       res.json({ error: "Could not load items: " + err });    
     } else {      res.json(data.Items);    }
   });
+});
+
+
+app.get("/form-data", (req, res)=>{
+  res.json(collector());
 });
 
 // app.get(path + hashKeyPath, function(req, res) {

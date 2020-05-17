@@ -14,6 +14,9 @@
         "categories": {
             "auth": {
                 "cognitod07a9e3c": {}
+            },
+            "function": {
+                "UserLambda": {}
             }
         }
     }

@@ -44,6 +44,15 @@ class App extends Component {
     .catch((err)=>{console.log("ftechlist error", err);});  
     this.setState({ list: [...response] });  
   }
+  async fetchFormData(){
+    await API.get("UserApi", "/form-data")
+    .then((res)=>{
+      return res.formData
+    })
+    .catch((err)=>{
+      return ["error getting form data"]
+    });
+  }
   // loadDetailsPage = async id => {    
   //   const response = await API.get("UserApi", "/items/" + id)
   //   .catch((err)=>{console.log("details error: ", err);});
@@ -73,6 +82,7 @@ class App extends Component {
         </form>
         <hr/>
         <List list={this.state.list} delete={this.delete} />
+        
       </div>    
     );  
   }
