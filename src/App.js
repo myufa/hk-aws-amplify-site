@@ -15,11 +15,13 @@ class App extends Component {
       name: "",      
       list: [],      
       item: {},      
-      showDetails: false    
+      showDetails: false,
+      formData: []    
     };  
   }
   async componentDidMount() {    
-    await this.fetchList();  
+    await this.fetchList(); 
+    await this.fetchFormData(); 
   }  
   handleChange = event => {    
     const id = event.target.id;    
@@ -41,22 +43,24 @@ class App extends Component {
   };  
   async fetchList() {    
     const response = await API.get("UserApi", "/items")
-    .catch((err)=>{console.log("ftechlist error", err);});  
+    .catch((err)=>{console.log("fetchlist error", err);});  
     if (response){
       this.setState({ list: [...response] });  
     }
   }
   async fetchFormData(){
-    await API.get("UserApi", "/form-data")
-    .then((res)=>{
-      console.log("res")
-      console.log(res)
-      return res.formData
-    })
-    .catch((err)=>{
-      console.log("error fetching form data")
-      return ["error getting form data"]
-    });
+    const response = await API.get("UserApi", "/form-data")
+    .catch((err)=>{console.log("fetch form data error", err);});  
+    if (response){
+      this.setState({ formData: response.rows });  
+    }
+    // return (
+    //   <table>
+    //   this.state.formData.map(()=>{
+
+    //   })
+    //   </table>
+    // )
   }
   // loadDetailsPage = async id => {    
   //   const response = await API.get("UserApi", "/items/" + id)
@@ -70,6 +74,13 @@ class App extends Component {
     await API.del("UserApi", "/items/object/" + id);
     this.fetchList();
   };
+
+  renderFormData() {
+    return (
+      <h1>{Object.keys(this.state.formData).length}</h1>
+    )
+  }
+
   render() {    
     return (      
       <div className="container">        
@@ -87,13 +98,15 @@ class App extends Component {
         </form>
         <hr/>
         <List list={this.state.list} delete={this.delete} />
-        {this.fetchFormData()}
+        <div>
+          {this.renderFormData()}
+        </div>
       </div>    
     );  
   }
 }
 
-
+/*{this.fetchFormData()}*/
 {/* <table>
           <tr> <th>Timestamp</th> <th>Email Address</th> <th>First name</th> <th>Last name</th> <th>Which university do you attend?</th> <th>What year are you?</th> <th>Why are you interested in becoming a member of HumanKind?</th> </tr>
           {

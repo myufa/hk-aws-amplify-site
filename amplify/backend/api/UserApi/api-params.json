@@ -13,6 +13,20 @@
                     "/DELETE"
                 ]
             }
+        },
+        {
+            "name": "/form-data",
+            "lambdaFunction": "UserLambda",
+            "privacy": {
+                "private": true,
+                "auth": [
+                    "/POST",
+                    "/GET",
+                    "/PUT",
+                    "/PATCH",
+                    "/DELETE"
+                ]
+            }
         }
     ],
     "resourceName": "UserApi",

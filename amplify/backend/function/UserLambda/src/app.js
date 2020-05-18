@@ -17,7 +17,7 @@ const AWS = require('aws-sdk')
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
-var collector = require('./formData')
+var collector = require('./formData').collector
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -75,7 +75,9 @@ app.get(path, function(req, res) {
 
 
 app.get("/form-data", (req, res)=>{
-  res.json(collector());
+  console.log("if young metro dont trust you")
+  console.log(collector())
+  res.json({collector: collector(), imgone: "shootchu"});
 });
 
 // app.get(path + hashKeyPath, function(req, res) {

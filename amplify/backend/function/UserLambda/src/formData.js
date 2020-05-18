@@ -10,11 +10,11 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 const TOKEN_PATH = 'token.json';
 
 // Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
-  if (err) return console.log('Error loading client secret file:', err);
-  // Authorize a client with credentials, then call the Google Sheets API.
-  authorize(JSON.parse(content), listMajors);
-});
+// fs.readFile('credentials.json', (err, content) => {
+//   if (err) return console.log('Error loading client secret file:', err);
+//   // Authorize a client with credentials, then call the Google Sheets API.
+//   authorize(JSON.parse(content), fechtData);
+// });
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -26,7 +26,7 @@ function authorize(credentials, callback) {
   //const {client_secret, client_id, redirect_uris} = credentials.web.client_id;
   const client_secret = credentials.web.client_secret;
   const client_id =  credentials.web.client_id;
-  const redirect_uri = "https://google.com";
+  const redirect_uri = "https://google.com"; // to receive code in url
 
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uri);
@@ -75,7 +75,7 @@ function getNewToken(oAuth2Client, callback) {
  * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
-function formData(auth) {
+function fechtData(auth) {
   const sheets = google.sheets({version: 'v4', auth});
   sheets.spreadsheets.values.get({
     spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
@@ -84,20 +84,59 @@ function formData(auth) {
     if (err) return console.log('The API returned an error: ' + err);
     const rows = res.data.values;
     if (rows.length) {
-      console.log('Serving form Data');
+      console.log('Name, University:');
       // Print columns A and E, which correspond to indices 0 and 4.
-      return {data: rows, length: rows.length}
+      rows.map((row) => {
+        console.log(`${row[2]}, ${row[4]}`);
+      });
     } else {
       console.log('No data found.');
-      return {error: "No data found."}
     }
   });
 }
 
+
 const collector = () => {
-    return formData();
+  const creds = fs.readFileSync('credentials.json');
+  const credentials = JSON.parse(creds);
+  console.log("credentials", credentials);
+  const client_secret = credentials.web.client_secret;
+  const client_id =  credentials.web.client_id;
+  const redirect_uri = "https://google.com"; // to receive code in url
+
+  const oAuth2Client = new google.auth.OAuth2(
+      client_id, client_secret, redirect_uri);
+  console.log("oAuth2Client", oAuth2Client);
+  // Check if we have previously stored a token.
+  auth = fs.readFileSync(TOKEN_PATH, (err, token) => {
+    if (err) return getNewToken(oAuth2Client, callback);
+    oAuth2Client.setCredentials(JSON.parse(token));
+    return oAuth2Client;
+  });
+  console.log(auth);
+  const sheets = google.sheets({version: 'v4', auth});
+  console.log("sheets", sheets);
+  sheets.spreadsheets.values.get({
+    spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
+    range: 'Form Responses 1!A2:G',
+  }, (err, res) => {
+    if (err) return console.log('The API returned an error: ' + err);
+    const rows = res.data.values;
+    console.log("printest")
+    console.log(res)
+    console.log("rows.length", rows.length)
+    console.log("rows", rows)
+    if (rows.length) {
+      console.log('serving formData');
+      console.log(rows)
+      // Print columns A and E, which correspond to indices 0 and 4.
+      return {rows: rows, length: rows.length}
+    } else {
+      console.log('No data found.');
+      throw(Error('No data found.')) 
+    }
+  });
+
 }
 
-// push plz
-
-module.exports = collector;
+exports.collector = collector;
