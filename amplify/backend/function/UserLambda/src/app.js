@@ -64,7 +64,35 @@ const convertUrlType = (param, type) => {
  * HTTP Get method for list objects *
  ********************************/
 
-app.get(path, function(req, res) {  
+app.get(path, function(req, res) { 
+  const form_rows = collector().then((data)=>{
+    return data.formData;
+  })
+  .catch((err)=>{
+    return Error("its ok, you'll get it next time!");
+  });
+  const num_db_rows = dynamodb.scan(queryParams, (err, data) => {    
+    if (err) {      
+      return Error("Could not load items: ");    
+    } else {      return data.Items.length    }
+  });
+  var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
+  let putItemParams = {
+    RequestItems: {
+      tableName: form_rows.map((row)=>{return {id: }})
+    }
+  }
+
+  if (form_rows.length > num_db_rows){
+    dynamodb.put(putItemParams, (err, data) => {
+      if(err) {
+        res.statusCode = 500;
+        res.json({error: err, url: req.url, body: req.body});
+      } else{
+        res.json({success: 'post call succeed!', url: req.url, data: data})
+      }
+    });
+  }
   const queryParams = { TableName: tableName };
   dynamodb.scan(queryParams, (err, data) => {    
     if (err) {      
@@ -75,10 +103,16 @@ app.get(path, function(req, res) {
 
 
 app.get("/form-data", (req, res)=>{
-  console.log("if young metro dont trust you")
-  console.log(collector())
-  res.json({collector: collector(), imgone: "shootchu"});
+  collector().then((data)=>{
+    res.json({formData: data});
+  })
+  .catch((err)=>{
+    res.json({error: err, comfortingMessage: "its ok, you'll get it next time!"});
+  });
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 });
+
 
 // app.get(path + hashKeyPath, function(req, res) {
 //   var condition = {}

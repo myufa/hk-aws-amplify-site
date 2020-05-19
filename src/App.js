@@ -52,12 +52,12 @@ class App extends Component {
     const response = await API.get("UserApi", "/form-data")
     .catch((err)=>{console.log("fetch form data error", err);});  
     if (response){
-      this.setState({ formData: response.rows });  
+      this.setState({ formData: response.formData });  
     }
     // return (
     //   <table>
     //   this.state.formData.map(()=>{
-
+ 
     //   })
     //   </table>
     // )

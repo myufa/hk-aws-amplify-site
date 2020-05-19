@@ -1,7 +1,6 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
-
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -96,10 +95,9 @@ function fechtData(auth) {
 }
 
 
-const collector = () => {
+const collector = async () => {
   const creds = fs.readFileSync('credentials.json');
   const credentials = JSON.parse(creds);
-  console.log("credentials", credentials);
   const client_secret = credentials.web.client_secret;
   const client_id =  credentials.web.client_id;
   const redirect_uri = "https://google.com"; // to receive code in url
@@ -108,35 +106,40 @@ const collector = () => {
       client_id, client_secret, redirect_uri);
   console.log("oAuth2Client", oAuth2Client);
   // Check if we have previously stored a token.
-  auth = fs.readFileSync(TOKEN_PATH, (err, token) => {
-    if (err) return getNewToken(oAuth2Client, callback);
-    oAuth2Client.setCredentials(JSON.parse(token));
-    return oAuth2Client;
-  });
+  var auth_token = fs.readFileSync(TOKEN_PATH);
+  if (!auth_token){
+      auth_token = getNewToken(oAuth2Client, callback);
+  }
+  oAuth2Client.setCredentials(JSON.parse(auth_token));
+  const auth = oAuth2Client;
   console.log(auth);
   const sheets = google.sheets({version: 'v4', auth});
   console.log("sheets", sheets);
-  sheets.spreadsheets.values.get({
+  const res = await sheets.spreadsheets.values.get({
     spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
     range: 'Form Responses 1!A2:G',
-  }, (err, res) => {
-    if (err) return console.log('The API returned an error: ' + err);
+  })
+  .then((res)=> {
+    console.log("then block");
+    console.log("res", res);
     const rows = res.data.values;
-    console.log("printest")
-    console.log(res)
-    console.log("rows.length", rows.length)
-    console.log("rows", rows)
+    console.log("print-test");
+    console.log(res);
+    console.log("rows.length", rows.length);
+    console.log("rows", rows);
     if (rows.length) {
       console.log('serving formData');
       console.log(rows)
-      // Print columns A and E, which correspond to indices 0 and 4.
-      return {rows: rows, length: rows.length}
+      return res
     } else {
       console.log('No data found.');
       throw(Error('No data found.')) 
     }
+  })
+  .catch((err)=>{
+    console.log('The API returned an error: ');
   });
-
+  return res.data.values;
 }
 
 exports.collector = collector;
