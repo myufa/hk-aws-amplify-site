@@ -64,6 +64,17 @@ const convertUrlType = (param, type) => {
  * HTTP Get method for list objects *
  ********************************/
 
+changeTime(google_time) {
+  split_times = google_time.split("/");
+  const month = split_times[0];
+  const day = split_times[1];
+  year_time = split_times[2].split(' ')
+  const year = year_time[0]
+  time = year_time[1]
+
+  const answer = year + '-' + month + '-' + day + " " + time;
+}
+
 app.get(path, function(req, res) { 
   const form_rows = collector().then((data)=>{
     return data.formData;
