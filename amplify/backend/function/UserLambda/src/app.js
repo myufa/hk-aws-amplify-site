@@ -61,31 +61,36 @@ const convertUrlType = (param, type) => {
   }
 }
 
-/********************************
- * HTTP Get method for list objects *
- ********************************/
 
-app.get(path, function(req, res) { 
+const updateDB = ()=> {
   const form_rows = collector().then((data)=>{
     return data.formData;
   })
   .catch((err)=>{
     return Error("its ok, you'll get it next time!");
   });
-  const num_db_rows = dynamodb.scan(queryParams, (err, data) => {    
+  const last_form_date = changeTime(form_rows[form_rows.length - 1][0])
+
+  const db_rows = dynamodb.scan(queryParams, (err, data) => {    
     if (err) {      
       return Error("Could not load items: ");    
-    } else {      return data.Items.length    }
-  });
-  var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
-  let putItemParams = {
-    RequestItems: {
-      tableName: form_rows.map((row)=>{return {id: }})
-    }
-  }
+    } else {      return data.Items    }
+  });  
+  const last_db_date = db_rows[db_rows.length - 1].id
 
-  if (form_rows.length > num_db_rows){
-    dynamodb.put(putItemParams, (err, data) => {
+  if (last_form_date > last_db_date){
+    let putItemParams = {
+      RequestItems: {
+        [tableName]: form_rows.map((row)=>{
+          return { 
+              id: changeTime(row[0]), 
+              content: row[1],
+              name: row[2]
+          }
+        })
+      }
+    }
+    dynamodb.batchWrite(putItemParams, (err, data) => {
       if(err) {
         res.statusCode = 500;
         res.json({error: err, url: req.url, body: req.body});
@@ -94,6 +99,14 @@ app.get(path, function(req, res) {
       }
     });
   }
+}
+
+/********************************
+ * HTTP Get method for list objects *
+ ********************************/
+
+app.get(path, function(req, res) { 
+  updateDB();
   const queryParams = { TableName: tableName };
   dynamodb.scan(queryParams, (err, data) => {    
     if (err) {      
