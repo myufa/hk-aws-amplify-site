@@ -13,7 +13,7 @@ function changeTime(google_time) {
     time = time.split(':');
 
     const answer = new Date(year, month, day, parseInt(time[0]), parseInt(time[1]), parseInt(time[2]))
-    return answer;
+    return Date.parse(answer);
   }
 
 
