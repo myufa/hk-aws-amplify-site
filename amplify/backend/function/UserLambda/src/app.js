@@ -62,17 +62,17 @@ const convertUrlType = (param, type) => {
 }
 
 
-const updateDB = ()=> {
-  const form_rows = collector().then((data)=>{
-    return data.formData;
+const updateDB = async () => {
+  const form_rows = await collector().then((data)=>{
+    return data;
   })
   .catch((err)=>{
     return Error("its ok, you'll get it next time!");
   });
   console.log("form rows", form_rows);
   const last_form_date = changeTime(form_rows[form_rows.length - 1][0])
-
-  const db_rows = dynamodb.scan(queryParams, (err, data) => {    
+  const queryParams = { TableName: tableName };
+  const db_rows = await dynamodb.scan(queryParams, (err, data) => {    
     if (err) {      
       return Error("Could not load items: ");    
     } else {      return data.Items    }
@@ -107,8 +107,8 @@ const updateDB = ()=> {
  * HTTP Get method for list objects *
  ********************************/
 
-app.get(path, function(req, res) { 
-  updateDB();
+app.get(path, async function(req, res) { 
+  await updateDB();
   const queryParams = { TableName: tableName };
   dynamodb.scan(queryParams, (err, data) => {    
     if (err) {      
