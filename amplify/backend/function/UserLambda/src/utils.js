@@ -10,8 +10,9 @@ function changeTime(google_time) {
     const year_time = split_times[2].split(' ')
     const year = year_time[0]
     const time = year_time[1]
-  
-    const answer = year + '-' + month + '-' + day + " " + time;
+    time = time.split(':')
+
+    const answer = new Date(year, month, day, time[0], time[1], time[2])
     return answer;
   }
 
