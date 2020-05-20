@@ -98,9 +98,6 @@ class App extends Component {
         </form>
         <hr/>
         <List list={this.state.list} delete={this.delete} />
-        <div>
-          {this.renderFormData()}
-        </div>
       </div>    
     );  
   }

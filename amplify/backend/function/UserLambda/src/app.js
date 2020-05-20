@@ -18,6 +18,7 @@ var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware'
 var bodyParser = require('body-parser')
 var express = require('express')
 const collector = require('./formData').collector
+const util = require('util')
 const changeTime = require('./utils').changeTime
 
 AWS.config.update({ region: process.env.TABLE_REGION });
@@ -70,34 +71,42 @@ const updateDB = async () => {
     return Error("its ok, you'll get it next time!");
   });
   console.log("form rows", form_rows);
-  const last_form_date = changeTime(form_rows[form_rows.length - 1][0])
+  const last_form_date = changeTime(form_rows[form_rows.length - 1][0]);
   const queryParams = { TableName: tableName };
-  const db_rows = await dynamodb.scan(queryParams, (err, data) => {    
+  const db_rows_prom = await dynamodb.scan(queryParams, (err, data) => {    
     if (err) {      
       return Error("Could not load items: ");    
     } else {      return data.Items    }
-  });  
+  }).promise(); 
+  const db_rows = db_rows_prom.Items;
   console.log("db_rows", db_rows);
-  const last_db_date = db_rows[db_rows.length - 1].id
+  const last_db_date = db_rows[db_rows.length - 1].id;
+  console.log("last of db type", typeof(last_db_date), typeof(db_rows[db_rows.length - 1].content),typeof(db_rows[db_rows.length - 1].name));
+  console.log("last of form type", typeof(last_form_date), typeof(form_rows[form_rows.length - 1][1]), typeof(form_rows[form_rows.length - 1][2]));
 
   if (last_form_date > last_db_date){
     let putItemParams = {
       RequestItems: {
         [tableName]: form_rows.map((row)=>{
-          return { 
-              id: changeTime(row[0]), 
-              content: row[1],
-              name: row[2]
+          return {
+            PutRequest: {
+              Item: { 
+                id: changeTime(row[0]), 
+                content: row[1],
+                name: row[2]
+              }
+            }
           }
         })
       }
     }
+    console.log("putItemParams", util.inspect(putItemParams, false, null, false))
     dynamodb.batchWrite(putItemParams, (err, data) => {
       if(err) {
-        res.statusCode = 500;
-        res.json({error: err, url: req.url, body: req.body});
+        console.log("batchwrite error", err);
+        return err;
       } else{
-        res.json({success: 'post call succeed!', url: req.url, data: data})
+        console.log({success: 'post call succeed!', data: data});
       }
     });
   }
