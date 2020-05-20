@@ -9,12 +9,11 @@ function changeTime(google_time) {
     const day = parseInt(split_times[1]);
     const year_time = split_times[2].split(' ');
     const year = parseInt(year_time[0]);
-    const time = year_time[1];
-    time = time.split(':');
+    const time = year_time[1].split(':');
 
     const answer = new Date(year, month, day, parseInt(time[0]), parseInt(time[1]), parseInt(time[2]))
     return Date.parse(answer);
-  }
+}
 
 
 exports.changeTime = changeTime;

@@ -69,6 +69,7 @@ const updateDB = ()=> {
   .catch((err)=>{
     return Error("its ok, you'll get it next time!");
   });
+  console.log("form rows", form_rows);
   const last_form_date = changeTime(form_rows[form_rows.length - 1][0])
 
   const db_rows = dynamodb.scan(queryParams, (err, data) => {    
@@ -76,6 +77,7 @@ const updateDB = ()=> {
       return Error("Could not load items: ");    
     } else {      return data.Items    }
   });  
+  console.log("db_rows", db_rows);
   const last_db_date = db_rows[db_rows.length - 1].id
 
   if (last_form_date > last_db_date){
