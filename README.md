@@ -4,7 +4,7 @@ This is an aws amplify project for displaying a database of volunteers for [Huma
 - Users are created from aws cognito console, user accounts cannot be made by any unauthorized person
 - All volunteers and their relevent information is displayed in a list
 - Users can add and delete volunteer records
-- User responses to intake google form are automatically pushed to dynamoDB
+- Volunteer responses to intake google form are automatically pushed to dynamoDB
 
 ### `TODO`
 - Updating form responses in dynamoDB based on last upload instead of uploading all records in the form
