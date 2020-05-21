@@ -169,7 +169,7 @@ class collector {
     console.log("sheets", sheets);
   }
 
-  get_records(){
+  async get_records(){
     const res = await this.sheets.spreadsheets.values.get({
       spreadsheetId: this.sheetId,
       range: 'Form Responses 1!A2:G',
