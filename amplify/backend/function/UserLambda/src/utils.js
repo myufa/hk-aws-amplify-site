@@ -35,8 +35,8 @@ function find_row_index(rows, timestamp) {
   // search for row index of timestamp
   console.log("~~form row date compare~~")
   for (i = 0; i < timestamp.length; ++i){
-      console.log(i, ") ", "search timestamp: ", row[i][0], "  row timestamp: ")
-      if (row[i][0] == googleTime) {
+      console.log(i, ") ", "search timestamp: ", rows[i][0], "  row timestamp: ")
+      if (rows[i][0] == googleTime) {
           return i;
       }
   }  
