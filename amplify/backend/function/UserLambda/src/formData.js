@@ -223,4 +223,4 @@ class collector {
   }
 };
 
-module.exports = collector;
+exports.collector = collector;
