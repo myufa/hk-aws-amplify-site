@@ -295,6 +295,7 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
   }
   console.log("params", util.inspect(params, false, null, false))
   console.log("id check", params[sortKeyName], typeof(params[sortKeyName]))
+  console.log("hardcoded id check", params["id"], typeof(params["id"]))
   
   collector.delete_records(params[sortKeyName])
   .catch(err => {
