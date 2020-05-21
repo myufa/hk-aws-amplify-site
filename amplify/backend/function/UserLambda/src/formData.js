@@ -192,7 +192,7 @@ class collector {
       }
     })
     .catch((err)=>{
-      console.log('The API returned an error: ');
+      console.log('The API returned an error: ', err);
     });
     return res.data.values;
   }

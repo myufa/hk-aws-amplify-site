@@ -33,11 +33,14 @@ function ISOtoGoogle(timestamp) {
 function find_row_index(rows, timestamp) {
   const googleTime = ISOtoGoogle(timestamp);
   // search for row index of timestamp
+  console.log("~~form row date compare~~")
   for (i = 0; i < timestamp.length; ++i){
+      console.log(i, ") ", "search timestamp: ", row[i][0], "  row timestamp: ")
       if (row[i][0] == googleTime) {
           return i;
       }
   }  
+  console.log("~~~~")
   return -1;  
 }
 
