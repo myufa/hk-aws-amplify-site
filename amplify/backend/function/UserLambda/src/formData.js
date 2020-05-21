@@ -95,51 +95,108 @@ function fechtData(auth) {
 }
 
 
-const collector = async () => {
-  const creds = fs.readFileSync('credentials.json');
-  const credentials = JSON.parse(creds);
-  const client_secret = credentials.web.client_secret;
-  const client_id =  credentials.web.client_id;
-  const redirect_uri = "https://google.com"; // to receive code in url
+// const collector = async () => {
+//   const creds = fs.readFileSync('credentials.json');
+//   const credentials = JSON.parse(creds);
+//   const client_secret = credentials.web.client_secret;
+//   const client_id =  credentials.web.client_id;
+//   const redirect_uri = "https://google.com"; // to receive code in url
 
-  const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uri);
-  console.log("oAuth2Client", oAuth2Client);
-  // Check if we have previously stored a token.
-  var auth_token = fs.readFileSync(TOKEN_PATH);
-  if (!auth_token){
-      auth_token = getNewToken(oAuth2Client, callback);
-  }
-  oAuth2Client.setCredentials(JSON.parse(auth_token));
-  const auth = oAuth2Client;
-  console.log(auth);
-  const sheets = google.sheets({version: 'v4', auth});
-  console.log("sheets", sheets);
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
-    range: 'Form Responses 1!A2:G',
-  })
-  .then((res)=> {
-    console.log("then block");
-    console.log("res", res);
-    const rows = res.data.values;
-    console.log("print-test");
-    console.log(res);
-    console.log("rows.length", rows.length);
-    console.log("rows", rows);
-    if (rows.length) {
-      console.log('serving formData');
-      console.log(rows)
-      return res
-    } else {
-      console.log('No data found.');
-      throw(Error('No data found.')) 
+//   const oAuth2Client = new google.auth.OAuth2(
+//       client_id, client_secret, redirect_uri);
+//   console.log("oAuth2Client", oAuth2Client);
+//   // Check if we have previously stored a token.
+//   var auth_token = fs.readFileSync(TOKEN_PATH);
+//   if (!auth_token){
+//       auth_token = getNewToken(oAuth2Client, callback);
+//   }
+//   oAuth2Client.setCredentials(JSON.parse(auth_token));
+//   const auth = oAuth2Client;
+//   console.log(auth);
+//   const sheets = google.sheets({version: 'v4', auth});
+//   console.log("sheets", sheets);
+//   const res = await sheets.spreadsheets.values.get({
+//     spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
+//     range: 'Form Responses 1!A2:G',
+//   })
+//   .then((res)=> {
+//     console.log("then block");
+//     console.log("res", res);
+//     const rows = res.data.values;
+//     console.log("print-test");
+//     console.log(res);
+//     console.log("rows.length", rows.length);
+//     console.log("rows", rows);
+//     if (rows.length) {
+//       console.log('serving formData');
+//       console.log(rows)
+//       return res
+//     } else {
+//       console.log('No data found.');
+//       throw(Error('No data found.')) 
+//     }
+//   })
+//   .catch((err)=>{
+//     console.log('The API returned an error: ');
+//   });
+//   return res.data.values;
+// }
+
+
+class collector {
+  constructor(){
+    const creds = fs.readFileSync('credentials.json');
+    const credentials = JSON.parse(creds);
+    const client_secret = credentials.web.client_secret;
+    const client_id =  credentials.web.client_id;
+    const redirect_uri = "https://google.com"; // to receive code in url
+
+    const oAuth2Client = new google.auth.OAuth2(
+        client_id, client_secret, redirect_uri);
+    console.log("oAuth2Client", oAuth2Client);
+    // Check if we have previously stored a token.
+    var auth_token = fs.readFileSync(TOKEN_PATH);
+    if (!auth_token){
+        auth_token = getNewToken(oAuth2Client, callback);
     }
-  })
-  .catch((err)=>{
-    console.log('The API returned an error: ');
-  });
-  return res.data.values;
-}
+    oAuth2Client.setCredentials(JSON.parse(auth_token));
+    const auth = oAuth2Client;
+    console.log(auth);
+    this.sheets = google.sheets({version: 'v4', auth});
+    console.log("sheets", sheets);
+  }
 
-exports.collector = collector;
+  get_records(){
+    const res = await this.sheets.spreadsheets.values.get({
+      spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
+      range: 'Form Responses 1!A2:G',
+    })
+    .then((res)=> {
+      console.log("then block");
+      console.log("res", res);
+      const rows = res.data.values;
+      console.log("print-test");
+      console.log(res);
+      console.log("rows.length", rows.length);
+      console.log("rows", rows);
+      if (rows.length) {
+        console.log('serving formData');
+        console.log(rows)
+        return res
+      } else {
+        console.log('No data found.');
+        throw(Error('No data found.')) 
+      }
+    })
+    .catch((err)=>{
+      console.log('The API returned an error: ');
+    });
+    return res.data.values;
+  }
+
+  delete_records(index){
+
+  }
+};
+
+module.exports = collector;

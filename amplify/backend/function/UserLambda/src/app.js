@@ -17,7 +17,7 @@ const AWS = require('aws-sdk')
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
-const collector = require('./formData').collector
+const collector = require('./formData')
 const util = require('util')
 const changeTime = require('./utils').changeTime
 
@@ -45,6 +45,7 @@ var app = express()
 app.use(bodyParser.json())
 app.use(awsServerlessExpressMiddleware.eventContext())
 
+
 // Enable CORS for all methods
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*")
@@ -64,7 +65,7 @@ const convertUrlType = (param, type) => {
 
 
 const updateDB = async () => {
-  const form_rows = await collector().then((data)=>{
+  const form_rows = await collector.get_records().then((data)=>{
     return data;
   })
   .catch((err)=>{
@@ -128,7 +129,7 @@ app.get(path, async function(req, res) {
 
 
 app.get("/form-data", (req, res)=>{
-  collector().then((data)=>{
+  collector.get_records().then((data)=>{
     res.json({formData: data});
   })
   .catch((err)=>{
