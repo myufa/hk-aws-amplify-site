@@ -25,7 +25,9 @@ case $1 in
     git add -A
     git commit -m "$commit_message"
     git push
-    y | amplify push
+    spawn amplify push
+    expect "? Are you sure you want to continue? (Y/n) "
+    send y
     ;;
   "start")
     echo "Starting React frontend"
