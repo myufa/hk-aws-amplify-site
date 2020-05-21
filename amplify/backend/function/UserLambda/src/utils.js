@@ -22,6 +22,7 @@ function changeTime(google_time) {
  */
 function ISOtoGoogle(timestamp) {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour12: false };
+    console.log("timestamp test 2", timestamp)
     return timestamp.toLocaleString('en-US', options);
 }
 

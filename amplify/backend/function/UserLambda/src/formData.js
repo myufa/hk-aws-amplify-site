@@ -198,6 +198,7 @@ class collector {
   }
 
   delete_records(timestamp){
+    console.log("timestamp test", timestamp)
     const rows = this.get_records();
     const index = find_row_index(rows, timestamp);
     if(index === -1){
@@ -210,7 +211,7 @@ class collector {
           "deleteDimension": { "range": { "sheetId": this.gID, "dimension": "ROWS", "startIndex": index, "endIndex": index + 1 } }
         }
       ]
-    }
+    };
 
     this.sheets.batchUpdate({
       spreadsheetId: this.spreadsheetId,
