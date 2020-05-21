@@ -33,7 +33,7 @@ function ISOtoGoogle(timestamp) {
 function find_row_index(rows, timestamp) {
   const googleTime = ISOtoGoogle(timestamp);
   // search for row index of timestamp
-  console.log("rows 2", rows)
+  console.log("rows 2 ", rows)
   console.log("~~form row date compare~~")
   for (i = 0; i < timestamp.length; ++i){
       console.log(i, ") ", "search timestamp: ", rows[i][0], "  row timestamp: ")
