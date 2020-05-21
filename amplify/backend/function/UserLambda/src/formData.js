@@ -199,7 +199,8 @@ class collector {
 
   delete_records(timestamp){
     console.log("timestamp test", timestamp)
-    const rows = this.get_records();
+    const rows = await this.get_records();
+    console.log("rows 1", rows)
     const index = find_row_index(rows, timestamp);
     if(index === -1){
       console.log("No such row found")
