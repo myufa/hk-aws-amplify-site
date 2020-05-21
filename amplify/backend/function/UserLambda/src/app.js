@@ -17,7 +17,7 @@ const AWS = require('aws-sdk')
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
-var formData = require('./formData').collector
+var formData = require('./formData')
 const util = require('util')
 const changeTime = require('./utils').changeTime
 
