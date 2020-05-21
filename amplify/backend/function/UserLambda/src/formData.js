@@ -1,6 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
+const find_row_index = require('./utils').find_row_index
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -145,6 +146,7 @@ function fechtData(auth) {
 
 class collector {
   constructor(){
+    this.sheetId = '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw'
     const creds = fs.readFileSync('credentials.json');
     const credentials = JSON.parse(creds);
     const client_secret = credentials.web.client_secret;
@@ -168,7 +170,7 @@ class collector {
 
   get_records(){
     const res = await this.sheets.spreadsheets.values.get({
-      spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
+      spreadsheetId: this.sheetId,
       range: 'Form Responses 1!A2:G',
     })
     .then((res)=> {
@@ -195,7 +197,23 @@ class collector {
   }
 
   delete_records(index){
+    const rows = this.get_records();
+    const index = find_row_index(rows);
+    del_request =  {
+      "requests": [
+        {
+          "deleteDimension": { "range": { "sheetId": this.sheetId, "dimension": "ROWS", "startIndex": index, "endIndex": index + 1 } }
+        }
+      ]
+    }
 
+    this.sheets.batchUpdate({
+      spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
+      resource: del_request
+    })
+    .catch(err => {
+      console.log(err)
+    });
   }
 };
 

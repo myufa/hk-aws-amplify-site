@@ -16,4 +16,27 @@ function changeTime(google_time) {
 }
 
 
+/**
+ * Changes ISO format dateTime into the google form timestamp:
+ * @param {String} isoTime the ISO 8601 time number, miliseconds from origin.
+ */
+function ISOtoGoogle() {
+
+}
+
+/**
+ * Searches an Array of google sheet row Arrays by timestamp and returns the row index:
+ * @param {String} timestamp the ISO 8601 time number, miliseconds from origin.
+ */
+function find_row_index(rows, timestamp) {
+  const googleTime = ISOtoGoogle(timestamp);
+  for (i = 0; i < timestamp.length; ++i){
+      if (row[i][0] == googleTime) {
+          return i
+      }
+  }    
+}
+
+
 exports.changeTime = changeTime;
+exports.find_row_index = find_row_index;
