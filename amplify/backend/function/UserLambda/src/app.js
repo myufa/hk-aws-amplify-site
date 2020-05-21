@@ -55,6 +55,7 @@ app.use(function(req, res, next) {
   next()
 });
 
+
 // convert url string param to expected Type
 const convertUrlType = (param, type) => {
   switch(type) {
@@ -272,7 +273,7 @@ app.post(path, function(req, res) {
 * HTTP remove method to delete object *
 ***************************************/
 
-app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
+app.delete(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res) {
   var params = {};
   if (userIdPresent && req.apiGateway) {
     params[partitionKeyName] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
