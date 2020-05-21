@@ -293,7 +293,10 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
       res.json({error: 'Wrong column type ' + err});
     }
   }
-
+  console.log("delete variables")
+  console.log("hash and sort keys", hashKeyPath, sortKeyPath)
+  console.log("sortkeyname", sortKeyName)
+  
   collector.delete_records(Number(sortKeyName))
   .catch(err => {
     console.log("collector delete error", err)
