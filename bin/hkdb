@@ -25,7 +25,8 @@ case $1 in
     git add -A
     git commit -m "$commit_message"
     git push
-    yes | amplify push
+    amplify push
+    yes
     ;;
   "start")
     echo "Starting React frontend"
