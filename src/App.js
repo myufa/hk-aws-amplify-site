@@ -20,8 +20,7 @@ class App extends Component {
     };  
   }
   async componentDidMount() {    
-    await this.fetchList(); 
-    await this.fetchFormData(); 
+    await this.fetchList();
   }  
   handleChange = event => {    
     const id = event.target.id;    
