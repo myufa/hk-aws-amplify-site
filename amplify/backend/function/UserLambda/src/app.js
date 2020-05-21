@@ -298,7 +298,7 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
   console.log("hash and sort keys", hashKeyPath, sortKeyPath)
   console.log("sortkeyname", sortKeyName)
 
-  collector.delete_records(Number(sortKeyName))
+  collector.delete_records(params[sortKeyName])
   .catch(err => {
     console.log("collector delete error", err)
   });
