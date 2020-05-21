@@ -166,7 +166,7 @@ class collector {
     const auth = oAuth2Client;
     console.log(auth);
     this.sheets = google.sheets({version: 'v4', auth});
-    console.log("sheets", sheets);
+    console.log("sheets", this.sheets);
   }
 
   async get_records(){
