@@ -17,7 +17,7 @@ const AWS = require('aws-sdk')
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
-const collector = require('./formData').collector
+var formData = require('./formData').collector
 const util = require('util')
 const changeTime = require('./utils').changeTime
 
@@ -45,6 +45,8 @@ var app = express()
 app.use(bodyParser.json())
 app.use(awsServerlessExpressMiddleware.eventContext())
 
+// declare a new collector
+var collector = new formData();
 
 // Enable CORS for all methods
 app.use(function(req, res, next) {
