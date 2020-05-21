@@ -118,6 +118,7 @@ const updateDB = async () => {
 app.get(path, async function(req, res) { 
   await updateDB();
   const queryParams = { TableName: tableName };
+  // comment
   dynamodb.scan(queryParams, (err, data) => {    
     if (err) {      
       res.json({ error: "Could not load items: " + err });    
