@@ -18,10 +18,11 @@ function changeTime(google_time) {
 
 /**
  * Changes ISO format dateTime into the google form timestamp:
- * @param {String} isoTime the ISO 8601 time number, miliseconds from origin.
+ * @param {Number} timestamp the ISO 8601 time number, miliseconds from origin.
  */
-function ISOtoGoogle() {
-
+function ISOtoGoogle(timestamp) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour12: false };
+    return timestamp.toLocaleString('en-US', options);
 }
 
 /**
@@ -30,11 +31,13 @@ function ISOtoGoogle() {
  */
 function find_row_index(rows, timestamp) {
   const googleTime = ISOtoGoogle(timestamp);
+  // search for row index of timestamp
   for (i = 0; i < timestamp.length; ++i){
       if (row[i][0] == googleTime) {
-          return i
+          return i;
       }
-  }    
+  }  
+  return -1;  
 }
 
 

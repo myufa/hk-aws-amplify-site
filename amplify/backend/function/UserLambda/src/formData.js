@@ -147,6 +147,7 @@ function fechtData(auth) {
 class collector {
   constructor(){
     this.sheetId = '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw'
+    this.gID = '1063414610'
     const creds = fs.readFileSync('credentials.json');
     const credentials = JSON.parse(creds);
     const client_secret = credentials.web.client_secret;
@@ -196,23 +197,28 @@ class collector {
     return res.data.values;
   }
 
-  delete_records(index){
+  delete_records(timestamp){
     const rows = this.get_records();
-    const index = find_row_index(rows);
+    const index = find_row_index(rows, timestamp);
+    if(index === -1){
+      console.log("No such row found")
+      return;
+    }
     del_request =  {
       "requests": [
         {
-          "deleteDimension": { "range": { "sheetId": this.sheetId, "dimension": "ROWS", "startIndex": index, "endIndex": index + 1 } }
+          "deleteDimension": { "range": { "sheetId": this.gID, "dimension": "ROWS", "startIndex": index, "endIndex": index + 1 } }
         }
       ]
     }
 
     this.sheets.batchUpdate({
-      spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
+      spreadsheetId: this.spreadsheetId,
       resource: del_request
     })
     .catch(err => {
       console.log(err)
+      return err;
     });
   }
 };
