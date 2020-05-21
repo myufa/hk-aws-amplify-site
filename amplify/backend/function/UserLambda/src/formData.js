@@ -198,7 +198,6 @@ class collector {
   }
 
   async delete_records(timestamp){
-    console.log("timestamp test", timestamp)
     const rows = await this.get_records();
     console.log("rows 1", rows)
     const index = find_row_index(rows, timestamp);
@@ -219,7 +218,7 @@ class collector {
       resource: del_request
     })
     .catch(err => {
-      console.log(err)
+      console.log("batch update error", err)
       return err;
     });
   }
