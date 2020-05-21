@@ -74,7 +74,6 @@ const updateDB = async () => {
   .catch((err)=>{
     return Error("its ok, you'll get it next time!");
   });
-  console.log("form rows", form_rows);
   const last_form_date = changeTime(form_rows[form_rows.length - 1][0]);
   const queryParams = { TableName: tableName };
   const db_rows_prom = await dynamodb.scan(queryParams, (err, data) => {    
@@ -83,10 +82,7 @@ const updateDB = async () => {
     } else {      return data.Items    }
   }).promise(); 
   const db_rows = db_rows_prom.Items;
-  console.log("db_rows", db_rows);
   const last_db_date = db_rows[db_rows.length - 1].id;
-  console.log("last of db type", typeof(last_db_date), typeof(db_rows[db_rows.length - 1].content),typeof(db_rows[db_rows.length - 1].name));
-  console.log("last of form type", typeof(last_form_date), typeof(form_rows[form_rows.length - 1][1]), typeof(form_rows[form_rows.length - 1][2]));
 
   if (last_form_date > last_db_date){
     let putItemParams = {
@@ -104,7 +100,6 @@ const updateDB = async () => {
         })
       }
     }
-    console.log("putItemParams", util.inspect(putItemParams, false, null, false))
     dynamodb.batchWrite(putItemParams, (err, data) => {
       if(err) {
         console.log("batchwrite error", err);
@@ -294,9 +289,6 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res
       res.json({error: 'Wrong column type ' + err});
     }
   }
-  console.log("params", util.inspect(params, false, null, false))
-  console.log("id check", params[partitionKeyName], typeof(params[partitionKeyName]))
-  console.log("hardcoded id check", params["id"], typeof(params["id"]))
   
   await collector.delete_records(params[partitionKeyName])
   .catch(err => {
