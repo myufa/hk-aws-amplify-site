@@ -25,7 +25,7 @@ function changeTime(google_time) {
 function ISOtoGoogle(timestamp) {
     const datestr = new Date(timestamp)
     console.log('timestamp: ', timestamp, " datestr: ", datestr)
-    var timestr = datestr.toLocaleString({hour12: false})
+    var datetime = datestr.toLocaleString()
     .then( datestr => {
         const timestr = datestr.substring(10, 20)
         console.log("time check", datestr, timestr)
@@ -42,8 +42,9 @@ function ISOtoGoogle(timestamp) {
         }
         
         return datestr.substring(0, 10) + hour + ':' + min + ':' + sec
-    })
-    return timestr;
+    });
+    console.log(datetime)
+    return datetime;
 }
 
 /**
