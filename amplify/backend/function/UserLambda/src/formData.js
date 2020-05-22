@@ -176,7 +176,7 @@ class collector {
       spreadsheetId: this.sheetId,
       range: 'Form Responses 1!A2:G',
     })
-    .then( (res)=> {
+    .then((res)=> {
       const rows = res.data.values;
       if (rows.length) {
         console.log('serving formData');
@@ -198,6 +198,7 @@ class collector {
     });
     return res.data.values;
   }
+  // comment
 
   async delete_records(timestamp){
     const rows = await this.get_records();

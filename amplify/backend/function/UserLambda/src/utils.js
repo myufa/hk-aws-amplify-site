@@ -25,11 +25,12 @@ function changeTime(google_time) {
 function ISOtoGoogle(timestamp) {
     const datestr = new Date(timestamp)
     console.log('timestamp: ', timestamp, " datestr: ", datestr)
-    const timestr = datestr.toLocaleString()
+    const timestr = datestr.toLocaleString({hour12: false})
     console.log('after toLocaleString ', timestr)
     const split_timestr = timestr.split('-')
     const year = split_timestr[0]
     const month = split_timestr[1]
+    console.log("split_timestr", split_timestr)
     const split_two = split_timestr[2].split('T')
     const day = split_two[0]
     const time_long = split_two[1]
