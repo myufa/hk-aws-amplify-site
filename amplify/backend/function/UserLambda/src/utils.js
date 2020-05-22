@@ -4,12 +4,17 @@
  * @param {String} google_time the google form timestamp as 'month/day/year hour:min:sec'.
  */
 function changeTime(google_time) {
+    console.log("google_time_check", google_time)
     const split_times = google_time.split("/");
     const month = parseInt(split_times[0]);
+    console.log("month", month)
     const day = parseInt(split_times[1]);
+    console.log("day", day)
     const year_time = split_times[2].split(' ');
     const year = parseInt(year_time[0]);
+    console.log("day", day)
     const time = year_time[1].split(':');
+    console.log("time", time)
 
     const answer = new Date(year, month, day, parseInt(time[0]), parseInt(time[1]), parseInt(time[2]))
     return Date.parse(answer);
@@ -27,8 +32,8 @@ function ISOtoGoogle(timestamp) {
     console.log('timestamp: ', timestamp, " datestr: ", datestr)
     var datetime = datestr.toLocaleString()
     const to24hr = datestr => {
-        const timestr = datestr.substring(10, 20)
-        console.log("time check", datestr, timestr)
+        var time = datestr.substring(10, 20)
+        console.log("time check", datestr, time)
         var PM = time.match('PM') ? true : false
         time = time.split(':')
         var min = time[1]
@@ -44,7 +49,7 @@ function ISOtoGoogle(timestamp) {
         return datestr.substring(0, 10) + hour + ':' + min + ':' + sec
     };
     console.log(datetime);
-    datetime = to24hr(datetime);
+    datetime = to24hr("after 24hr conv", datetime);
     console.log(datetime);
     return datetime;
 }
