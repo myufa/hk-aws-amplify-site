@@ -19,11 +19,25 @@ function changeTime(google_time) {
 /**
  * Changes ISO format dateTime into the google form timestamp:
  * @param {Number} timestamp the ISO 8601 time number, miliseconds from origin.
+ * 2011-10-05T14:48:00.000Z
+ * 5/15/2020 12:44:55
  */
 function ISOtoGoogle(timestamp) {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour12: false };
-    console.log("timestamp test 2", timestamp)
-    return timestamp.toLocaleString('en-US', options);
+    const datestr = new Date(timestamp)
+    console.log('timestamp: ', timestamp, " datestr: ", datestr)
+    const timestr = datestr.toLocaleString()
+    console.log('after toLocaleString ', timestr)
+    const split_timestr = timestr.split('-')
+    const year = split_timestr[0]
+    const month = split_timestr[1]
+    const split_two = split_timestr[2].split('T')
+    const day = split_two[0]
+    const time_long = split_two[1]
+    const time = time_long.split('.')[0]
+
+    const new_time = month + '/' + day + '/' + year + ' ' + time
+    console.log('converted time: ', new_time, 'original timestamp: ', timestamp)
+    return new_time
 }
 
 /**
@@ -31,19 +45,20 @@ function ISOtoGoogle(timestamp) {
  * @param {String} timestamp the ISO 8601 time number, miliseconds from origin.
  */
 function find_row_index(rows, timestamp) {
-  const googleTime = ISOtoGoogle(timestamp);
-  // search for row index of timestamp
-  console.log("rows 2 ", rows)
-  console.log("~~form row date compare~~")
-  for (i = 0; i < rows.length; ++i){
-      console.log(i, ") ", "search timestamp: ", timestamp, "  row timestamp: ", rows[i][0])
-      if (rows[i][0] == googleTime) {
-          return i;
-      }
-  }  
-  console.log("~~~~")
-  return -1;  
-}
+    const googleTime = ISOtoGoogle(timestamp);
+    console.log("Google time: ", googleTime)
+    // search for row index of timestamp
+    console.log("rows 2 ", rows)
+    console.log("~~form row date compare~~")
+    for (i = 0; i < rows.length; ++i){
+        console.log(i, ") ", "search timestamp: ", googleTime, "  row timestamp: ", rows[i][0])
+        if (rows[i][0] == googleTime) {
+            return i;
+        }
+    }  
+    console.log("~~~~")
+    return -1;  
+  }
 
 
 exports.changeTime = changeTime;
