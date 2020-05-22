@@ -25,20 +25,25 @@ function changeTime(google_time) {
 function ISOtoGoogle(timestamp) {
     const datestr = new Date(timestamp)
     console.log('timestamp: ', timestamp, " datestr: ", datestr)
-    const timestr = datestr.toLocaleString({hour12: false})
-    console.log('after toLocaleString ', timestr)
-    const split_timestr = timestr.split('-')
-    const year = split_timestr[0]
-    const month = split_timestr[1]
-    console.log("split_timestr", split_timestr)
-    const split_two = split_timestr[2].split('T')
-    const day = split_two[0]
-    const time_long = split_two[1]
-    const time = time_long.split('.')[0]
-
-    const new_time = month + '/' + day + '/' + year + ' ' + time
-    console.log('converted time: ', new_time, 'original timestamp: ', timestamp)
-    return new_time
+    var timestr = datestr.toLocaleString({hour12: false})
+    .then( datestr => {
+        const timestr = datestr.substring(10, 20)
+        console.log("time check", datestr, timestr)
+        var PM = time.match('PM') ? true : false
+        time = time.split(':')
+        var min = time[1]
+        
+        if (PM) {
+            var hour = 12 + parseInt(time[0],10)
+            var sec = time[2].replace('PM', '')
+        } else {
+            var hour = time[0]
+            var sec = time[2].replace('AM', '')       
+        }
+        
+        return datestr.substring(0, 10) + hour + ':' + min + ':' + sec
+    })
+    return timestr;
 }
 
 /**
