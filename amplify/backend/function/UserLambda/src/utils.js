@@ -63,3 +63,4 @@ function find_row_index(rows, timestamp) {
 
 exports.changeTime = changeTime;
 exports.find_row_index = find_row_index;
+exports.ISOtoGoogle = ISOtoGoogle;

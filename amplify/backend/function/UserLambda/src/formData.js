@@ -2,6 +2,8 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 const find_row_index = require('./utils').find_row_index
+const changeTime = require('./utils').changeTime
+const ISOtoGoogle = require('./utils').ISOtoGoogle
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -174,14 +176,8 @@ class collector {
       spreadsheetId: this.sheetId,
       range: 'Form Responses 1!A2:G',
     })
-    .then((res)=> {
-      console.log("then block");
-      console.log("res", res);
+    .then( (res)=> {
       const rows = res.data.values;
-      console.log("print-test");
-      console.log(res);
-      console.log("rows.length", rows.length);
-      console.log("rows", rows);
       if (rows.length) {
         console.log('serving formData');
         console.log(rows)
@@ -190,6 +186,12 @@ class collector {
         console.log('No data found.');
         throw(Error('No data found.')) 
       }
+    })
+    .then(res=> {
+      res.data.values.map(row => {
+        console.log('row 0: ', row[0], ' changeTime: ', changeTime(row[0]), 'Iso to google', ISOtoGoogle(changeTime(row[0])))
+      })
+      return res
     })
     .catch((err)=>{
       console.log('The API returned an error: ', err);
