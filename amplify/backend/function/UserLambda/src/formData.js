@@ -166,6 +166,7 @@ class collector {
     }
     oAuth2Client.setCredentials(JSON.parse(auth_token));
     const auth = oAuth2Client;
+    this.auth = auth;
     console.log(auth);
     this.sheets = google.sheets({version: 'v4', auth});
     console.log("sheets", this.sheets);
@@ -187,12 +188,6 @@ class collector {
         throw(Error('No data found.')) 
       }
     })
-    .then(res=> {
-      res.data.values.map(row => {
-        console.log('row 0: ', row[0], ' googleToUnix: ', googleToUnix(row[0]), 'Iso to google', unixToGoogle(googleToUnix(row[0])))
-      })
-      return res
-    })
     .catch((err)=>{
       console.log('The API returned an error: ', err);
     });
@@ -204,19 +199,23 @@ class collector {
     const rows = await this.get_records();
     console.log("rows 1", rows)
     const index = find_row_index(rows, timestamp);
+    console.log("~~~~~~~~~~index_check", index);
     if(index === -1){
       console.log("No such row found")
       return;
     }
-    del_request =  {
+    const del_request = {
+      valueInputOption: "USER_ENTERED",
       "requests": [
         {
-          "deleteDimension": { "range": { "sheetId": this.gID, "dimension": "ROWS", "startIndex": index, "endIndex": index + 1 } }
+          "deleteDimension": { "range": { "sheetId": this.gID, "startIndex": index, "endIndex": index + 1 }, "shiftDimension": "ROWS" }
         }
       ]
     };
-
-    this.sheets.batchUpdate({
+    const params = {spreadsheetId: this.spreadsheetId};
+    this.sheets.spreadsheets.batchUpdate({
+      auth: this.auth,
+      valueInputOption: "USER_ENTERED",
       spreadsheetId: this.spreadsheetId,
       resource: del_request
     })

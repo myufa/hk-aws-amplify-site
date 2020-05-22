@@ -26,7 +26,7 @@ function unixToGoogle(timestamp) {
     console.log('timestamp: ', timestamp, " datestr: ", datestr)
     var datetime = datestr.toLocaleString()
     const to24hr = datestr => {
-        var time = datestr.substring(10, 20)
+        var time = datestr.substring(10)
         console.log("time check", datestr, time)
         var PM = time.match('PM') ? true : false
         time = time.split(':')
@@ -40,7 +40,7 @@ function unixToGoogle(timestamp) {
             var sec = time[2].replace('AM', '')       
         }
         
-        return datestr.substring(0, 10) + hour + ':' + min + ':' + sec
+        return datestr.substring(0, 9) + " " + hour + ':' + min + ':' + sec
     };
     console.log("datetime unixtog", datetime);
     datetime = to24hr(datetime);
@@ -53,15 +53,15 @@ function unixToGoogle(timestamp) {
  * @param {String} timestamp the ISO 8601 time number, miliseconds from origin.
  */
 function find_row_index(rows, timestamp) {
-    const googleTime = ISOtoGoogle(timestamp);
+    const googleTime = unixToGoogle(timestamp).trim();
     console.log("Google time: ", googleTime)
     // search for row index of timestamp
     console.log("rows 2 ", rows)
     console.log("~~form row date compare~~")
     for (i = 0; i < rows.length; ++i){
-        console.log(i, ") ", "search timestamp: ", googleTime, "  row timestamp: ", rows[i][0])
-        if (rows[i][0] == googleTime) {
-            return i;
+        console.log(i, ") ", "search timestamp: ", googleTime, "  row timestamp: ", rows[i][0].trim(), googleTime === rows[i][0].trim())
+        if (rows[i][0].trim() === googleTime) {
+            return i + 2;
         }
     }  
     console.log("~~~~")

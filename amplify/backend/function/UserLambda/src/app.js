@@ -19,7 +19,8 @@ var bodyParser = require('body-parser')
 var express = require('express')
 var formData = require('./formData')
 const util = require('util')
-const changeTime = require('./utils').changeTime
+const googleToUnix = require('./utils').googleToUnix
+const unixToGoogle = require('./utils').unixToGoogle
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -66,6 +67,32 @@ const convertUrlType = (param, type) => {
   }
 }
 
+const updateDBHelper = async (form_rows) => {
+  console.log("updateDB check 2", form_rows[form_rows.length - 1]);
+  let putItemParams = {
+    RequestItems: {
+      [tableName]: form_rows.map((row)=>{
+        return {
+          PutRequest: {
+            Item: { 
+              id: googleToUnix(row[0]), 
+              content: row[1],
+              name: row[2]
+            }
+          }
+        }
+      })
+    }
+  }
+  dynamodb.batchWrite(putItemParams, (err, data) => {
+    if(err) {
+      console.log("batchwrite error", err);
+      return err;
+    } else{
+      console.log({success: 'post call succeed!', data: data});
+    }
+  });
+}
 
 const updateDB = async () => {
   const form_rows = await collector.get_records().then((data)=>{
@@ -74,40 +101,27 @@ const updateDB = async () => {
   .catch((err)=>{
     return Error("its ok, you'll get it next time!");
   });
-  const last_form_date = changeTime(form_rows[form_rows.length - 1][0]);
+  const last_form_date = googleToUnix(form_rows[form_rows.length - 1][0]);
   const queryParams = { TableName: tableName };
   const db_rows_prom = await dynamodb.scan(queryParams, (err, data) => {    
     if (err) {      
       return Error("Could not load items: ");    
     } else {      return data.Items    }
   }).promise(); 
+  console.log("db rows check [prom, items]", db_rows_prom, db_rows_prom.Items, !db_rows_prom.Items.length)
+  if(!Array.isArray(db_rows_prom.Items) || !db_rows_prom.Items.length){
+    print("updateDB check", form_rows[form_rows.length - 1]);
+    await updateDBHelper(form_rows);
+    return "No data in db, updated from form";
+  }
   const db_rows = db_rows_prom.Items;
   const last_db_date = db_rows[db_rows.length - 1].id;
-
+  console.log("form update check [form, db]", last_form_date, last_db_date, last_form_date > last_db_date)
+  console.log("form update check in dates [form, db]", form_rows[form_rows.length - 1][0] , unixToGoogle(last_db_date))
+  console.log("form update check in names", form_rows[form_rows.length - 1][2], db_rows[db_rows.length - 1].name)
   if (last_form_date > last_db_date){
-    let putItemParams = {
-      RequestItems: {
-        [tableName]: form_rows.map((row)=>{
-          return {
-            PutRequest: {
-              Item: { 
-                id: changeTime(row[0]), 
-                content: row[1],
-                name: row[2]
-              }
-            }
-          }
-        })
-      }
-    }
-    dynamodb.batchWrite(putItemParams, (err, data) => {
-      if(err) {
-        console.log("batchwrite error", err);
-        return err;
-      } else{
-        console.log({success: 'post call succeed!', data: data});
-      }
-    });
+    await updateDBHelper(form_rows);
+    return "data in db did not include most recent, updated from form";
   }
 }
 
@@ -116,7 +130,8 @@ const updateDB = async () => {
  ********************************/
 
 app.get(path, async function(req, res) { 
-  await updateDB();
+  const updateDBStatus = await updateDB();
+  console.log(updateDBStatus);
   const queryParams = { TableName: tableName };
   // comment
   dynamodb.scan(queryParams, (err, data) => {    
