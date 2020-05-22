@@ -2,8 +2,8 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 const find_row_index = require('./utils').find_row_index
-const changeTime = require('./utils').changeTime
-const ISOtoGoogle = require('./utils').ISOtoGoogle
+const googleToUnix = require('./utils').googleToUnix
+const unixToGoogle = require('./utils').unixToGoogle
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -189,7 +189,7 @@ class collector {
     })
     .then(res=> {
       res.data.values.map(row => {
-        console.log('row 0: ', row[0], ' changeTime: ', changeTime(row[0]), 'Iso to google', ISOtoGoogle(changeTime(row[0])))
+        console.log('row 0: ', row[0], ' googleToUnix: ', googleToUnix(row[0]), 'Iso to google', unixToGoogle(googleToUnix(row[0])))
       })
       return res
     })

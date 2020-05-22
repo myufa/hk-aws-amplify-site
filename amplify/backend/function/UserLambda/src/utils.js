@@ -3,20 +3,14 @@
  * Changes the google form timestamp into an ISO format dateTime:
  * @param {String} google_time the google form timestamp as 'month/day/year hour:min:sec'.
  */
-function changeTime(google_time) {
-    console.log("google_time_check", google_time)
+function googleToUnix(google_time) {
     const split_times = google_time.split("/");
     const month = parseInt(split_times[0]);
-    console.log("month", month)
     const day = parseInt(split_times[1]);
-    console.log("day", day)
     const year_time = split_times[2].split(' ');
     const year = parseInt(year_time[0]);
-    console.log("day", day)
     const time = year_time[1].split(':');
-    console.log("time", time)
-
-    const answer = new Date(year, month, day, parseInt(time[0]), parseInt(time[1]), parseInt(time[2]))
+    const answer = new Date(year, month - 1, day, parseInt(time[0]), parseInt(time[1]), parseInt(time[2]));
     return Date.parse(answer);
 }
 
@@ -27,7 +21,7 @@ function changeTime(google_time) {
  * 2011-10-05T14:48:00.000Z
  * 5/15/2020 12:44:55
  */
-function ISOtoGoogle(timestamp) {
+function unixToGoogle(timestamp) {
     const datestr = new Date(timestamp)
     console.log('timestamp: ', timestamp, " datestr: ", datestr)
     var datetime = datestr.toLocaleString()
@@ -48,9 +42,9 @@ function ISOtoGoogle(timestamp) {
         
         return datestr.substring(0, 10) + hour + ':' + min + ':' + sec
     };
-    console.log(datetime);
-    datetime = to24hr("after 24hr conv", datetime);
-    console.log(datetime);
+    console.log("datetime unixtog", datetime);
+    datetime = to24hr(datetime);
+    console.log("after 24hr conv", datetime);
     return datetime;
 }
 
@@ -75,6 +69,6 @@ function find_row_index(rows, timestamp) {
   }
 
 
-exports.changeTime = changeTime;
+exports.googleToUnix = googleToUnix;
+exports.unixToGoogle = unixToGoogle;
 exports.find_row_index = find_row_index;
-exports.ISOtoGoogle = ISOtoGoogle;
