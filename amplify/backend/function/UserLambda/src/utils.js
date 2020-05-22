@@ -26,7 +26,7 @@ function ISOtoGoogle(timestamp) {
     const datestr = new Date(timestamp)
     console.log('timestamp: ', timestamp, " datestr: ", datestr)
     var datetime = datestr.toLocaleString()
-    .then( datestr => {
+    const to24hr = datestr => {
         const timestr = datestr.substring(10, 20)
         console.log("time check", datestr, timestr)
         var PM = time.match('PM') ? true : false
@@ -42,8 +42,10 @@ function ISOtoGoogle(timestamp) {
         }
         
         return datestr.substring(0, 10) + hour + ':' + min + ':' + sec
-    });
-    console.log(datetime)
+    };
+    console.log(datetime);
+    datetime = to24hr(datetime);
+    console.log(datetime);
     return datetime;
 }
 
