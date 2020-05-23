@@ -61,7 +61,7 @@ function find_row_index(rows, timestamp) {
     for (i = 0; i < rows.length; ++i){
         console.log(i, ") ", "search timestamp: ", googleTime, "  row timestamp: ", rows[i][0].trim(), googleTime === rows[i][0].trim())
         if (rows[i][0].trim() === googleTime) {
-            return i + 2;
+            return i + 1;
         }
     }  
     console.log("~~~~")

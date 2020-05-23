@@ -206,17 +206,21 @@ class collector {
     }
     const del_request = {
       valueInputOption: "USER_ENTERED",
-      "requests": [
-        {
-          "deleteDimension": { "range": { "sheetId": this.gID, "startIndex": index, "endIndex": index + 1 }, "shiftDimension": "ROWS" }
+      "requests": [{
+        "deleteDimension": {
+          "range": {
+            "sheetId": this.gID,
+            "dimension": "ROWS",
+            "startIndex": index,
+            "endIndex": index+1
+          }
         }
-      ]
+      }]
     };
     const params = {spreadsheetId: this.spreadsheetId};
     this.sheets.spreadsheets.batchUpdate({
-      auth: this.auth,
-      valueInputOption: "USER_ENTERED",
-      spreadsheetId: this.spreadsheetId,
+      // valueInputOption: "USER_ENTERED",
+      // spreadsheetId: this.spreadsheetId,
       resource: del_request
     })
     .catch(err => {
