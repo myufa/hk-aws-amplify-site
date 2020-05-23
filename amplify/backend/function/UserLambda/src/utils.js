@@ -23,7 +23,6 @@ function googleToUnix(google_time) {
  */
 function unixToGoogle(timestamp) {
     const datestr = new Date(timestamp)
-    console.log('timestamp: ', timestamp, " datestr: ", datestr)
     var datetime = datestr.toLocaleString()
     const to24hr = datestr => {
         var time = datestr.substring(10)
@@ -42,9 +41,7 @@ function unixToGoogle(timestamp) {
         
         return datestr.substring(0, 9) + " " + hour + ':' + min + ':' + sec
     };
-    console.log("datetime unixtog", datetime);
     datetime = to24hr(datetime);
-    console.log("after 24hr conv", datetime);
     return datetime;
 }
 
@@ -54,17 +51,12 @@ function unixToGoogle(timestamp) {
  */
 function find_row_index(rows, timestamp) {
     const googleTime = unixToGoogle(timestamp).trim();
-    console.log("Google time: ", googleTime)
     // search for row index of timestamp
-    console.log("rows 2 ", rows)
-    console.log("~~form row date compare~~")
     for (i = 0; i < rows.length; ++i){
-        console.log(i, ") ", "search timestamp: ", googleTime, "  row timestamp: ", rows[i][0].trim(), googleTime === rows[i][0].trim())
         if (rows[i][0].trim() === googleTime) {
             return i + 1;
         }
     }  
-    console.log("~~~~")
     return -1;  
   }
 

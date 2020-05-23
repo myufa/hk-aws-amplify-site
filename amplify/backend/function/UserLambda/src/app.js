@@ -68,7 +68,6 @@ const convertUrlType = (param, type) => {
 }
 
 const updateDBHelper = async (form_rows) => {
-  console.log("updateDB check 2", form_rows[form_rows.length - 1]);
   let putItemParams = {
     RequestItems: {
       [tableName]: form_rows.map((row)=>{
@@ -86,10 +85,10 @@ const updateDBHelper = async (form_rows) => {
   }
   dynamodb.batchWrite(putItemParams, (err, data) => {
     if(err) {
-      console.log("batchwrite error", err);
+      console.log("Batchwrite error", err);
       return err;
     } else{
-      console.log({success: 'post call succeed!', data: data});
+      console.log({success: 'Updated form rows in DB!', data: data});
     }
   });
 }
@@ -108,7 +107,6 @@ const updateDB = async () => {
       return Error("Could not load items: ");    
     } else {      return data.Items    }
   }).promise(); 
-  console.log("db rows check [prom, items]", db_rows_prom, db_rows_prom.Items, !db_rows_prom.Items.length)
   if(!Array.isArray(db_rows_prom.Items) || !db_rows_prom.Items.length){
     print("updateDB check", form_rows[form_rows.length - 1]);
     await updateDBHelper(form_rows);
@@ -116,9 +114,6 @@ const updateDB = async () => {
   }
   const db_rows = db_rows_prom.Items;
   const last_db_date = db_rows[db_rows.length - 1].id;
-  console.log("form update check [form, db]", last_form_date, last_db_date, last_form_date > last_db_date)
-  console.log("form update check in dates [form, db]", form_rows[form_rows.length - 1][0] , unixToGoogle(last_db_date))
-  console.log("form update check in names", form_rows[form_rows.length - 1][2], db_rows[db_rows.length - 1].name)
   if (last_form_date > last_db_date){
     await updateDBHelper(form_rows);
     return "data in db did not include most recent, updated from form";

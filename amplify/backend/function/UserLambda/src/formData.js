@@ -148,8 +148,8 @@ function fechtData(auth) {
 
 class collector {
   constructor(){
-    this.sheetId = '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw'
-    this.gID = '1063414610'
+    this.spreadsheetId = '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw'
+    this.sheetId = '1063414610'
     const creds = fs.readFileSync('credentials.json');
     const credentials = JSON.parse(creds);
     const client_secret = credentials.web.client_secret;
@@ -158,7 +158,6 @@ class collector {
 
     const oAuth2Client = new google.auth.OAuth2(
         client_id, client_secret, redirect_uri);
-    console.log("oAuth2Client", oAuth2Client);
     // Check if we have previously stored a token.
     var auth_token = fs.readFileSync(TOKEN_PATH);
     if (!auth_token){
@@ -167,14 +166,12 @@ class collector {
     oAuth2Client.setCredentials(JSON.parse(auth_token));
     const auth = oAuth2Client;
     this.auth = auth;
-    console.log(auth);
     this.sheets = google.sheets({version: 'v4', auth});
-    console.log("sheets", this.sheets);
   }
 
   async get_records(){
     const res = await this.sheets.spreadsheets.values.get({
-      spreadsheetId: this.sheetId,
+      spreadsheetId: this.spreadsheetId,
       range: 'Form Responses 1!A2:G',
     })
     .then((res)=> {
@@ -197,19 +194,16 @@ class collector {
 
   async delete_records(timestamp){
     const rows = await this.get_records();
-    console.log("rows 1", rows)
     const index = find_row_index(rows, timestamp);
-    console.log("~~~~~~~~~~index_check", index);
     if(index === -1){
       console.log("No such row found")
       return;
     }
     const del_request = {
-      valueInputOption: "USER_ENTERED",
       "requests": [{
-        "deleteDimension": {
+        deleteDimension: {
           "range": {
-            "sheetId": this.gID,
+            "sheetId": this.sheetId,
             "dimension": "ROWS",
             "startIndex": index,
             "endIndex": index+1
@@ -217,11 +211,14 @@ class collector {
         }
       }]
     };
-    const params = {spreadsheetId: this.spreadsheetId};
-    this.sheets.spreadsheets.batchUpdate({
-      // valueInputOption: "USER_ENTERED",
-      // spreadsheetId: this.spreadsheetId,
+    console.log("spreadsheetId and gID check", this.spreadsheetId, this.sheetId);
+    await this.sheets.spreadsheets.batchUpdate({
+      spreadsheetId: this.spreadsheetId,
+      auth: this.auth,
       resource: del_request
+    })
+    .then(resp=>{
+      console.log("batchupdate success!", resp)
     })
     .catch(err => {
       console.log("batch update error", err)
