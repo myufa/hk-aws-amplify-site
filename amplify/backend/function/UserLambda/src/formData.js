@@ -74,7 +74,7 @@ function getNewToken(oAuth2Client, callback) {
 
 
 class collector {
-  constructor(credentials, token){
+  async constructor(credentials, token){
     this.spreadsheetId = '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw'
     this.sheetId = '1063414610'
     const creds = fs.readFileSync('credentials.json');

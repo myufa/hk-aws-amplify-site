@@ -49,18 +49,7 @@ app.use(awsServerlessExpressMiddleware.eventContext())
 // declare s3 object and obtain google auth
 var s3 = new AWS.S3();
 
-const collector = fetch_credentials(s3, "credentials")
-.then(googleCredentials=> {
-  var googleAuth = fetch_credentials(s3, "token")
-  .then(googleToken=> {
-    console.log("Google auth check in prom: ", googleCredentials, googleToken)
-    return [googleCredentials, googleToken];
-  });
-})
-.then(googleAuth=>{
-  return new formData(googleAuth[0], googleAuth[1]);
-});
-console.log("collector test post prom", collector);
+
 
 // Enable CORS for all methods
 app.use(function(req, res, next) {
@@ -130,6 +119,19 @@ const updateDBHelper = async (form_rows) => {
 }
 
 const updateDB = async () => {
+
+  const collector = await fetch_credentials(s3, "credentials")
+  .then(googleCredentials=> {
+    var googleAuth = fetch_credentials(s3, "token")
+    .then(googleToken=> {
+      console.log("Google auth check in prom: ", googleCredentials, googleToken)
+      return [googleCredentials, googleToken];
+    });
+  })
+  .then(googleAuth=>{
+    return new formData(googleAuth[0], googleAuth[1]);
+  });
+
   console.log("collector test in GET", collector);
   const form_rows = await collector.get_records().then((data)=>{
     return data;
@@ -177,6 +179,18 @@ app.get(path, async function(req, res) {
 
 
 app.get("/form-data", (req, res)=>{
+  // declare collector
+  const collector = await fetch_credentials(s3, "credentials")
+  .then(googleCredentials=> {
+    var googleAuth = fetch_credentials(s3, "token")
+    .then(googleToken=> {
+      console.log("Google auth check in prom: ", googleCredentials, googleToken)
+      return [googleCredentials, googleToken];
+    });
+  })
+  .then(googleAuth=>{
+    return new formData(googleAuth[0], googleAuth[1]);
+  });
   collector.get_records().then((data)=>{
     res.json({formData: data});
   })
@@ -306,6 +320,19 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res
       res.json({error: 'Wrong column type ' + err});
     }
   }
+
+  // declare collector
+  const collector = await fetch_credentials(s3, "credentials")
+  .then(googleCredentials=> {
+    var googleAuth = fetch_credentials(s3, "token")
+    .then(googleToken=> {
+      console.log("Google auth check in prom: ", googleCredentials, googleToken)
+      return [googleCredentials, googleToken];
+    });
+  })
+  .then(googleAuth=>{
+    return new formData(googleAuth[0], googleAuth[1]);
+  });
   
   await collector.delete_records(params[partitionKeyName])
   .catch(err => {
