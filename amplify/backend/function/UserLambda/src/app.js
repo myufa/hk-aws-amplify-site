@@ -48,13 +48,19 @@ app.use(awsServerlessExpressMiddleware.eventContext())
 
 // declare s3 object and obtain google auth
 var s3 = new AWS.S3();
-const googleCredentials = fetch_credentials(s3, "credentials").then(data=> {return data});
-const googleToken = fetch_credentials(s3, "token").then(data=> {return data});
-setTimeout(()=>{console.log("fuck me")}, 3000);
-console.log("google verify check", googleCredentials, googleToken);
-// declare a new collector
-var collector = new formData(googleCredentials, googleToken);
 
+const collector = fetch_credentials(s3, "credentials")
+.then(googleCredentials=> {
+  var googleAuth = fetch_credentials(s3, "token")
+  .then(googleToken=> {
+    console.log("Google auth check in prom: ", googleCredentials, googleToken)
+    return [googleCredentials, googleToken];
+  });
+})
+.then(googleAuth=>{
+  return new formData(googleAuth[0], googleAuth[1]);
+});
+console.log("collector test post prom", collector);
 
 // Enable CORS for all methods
 app.use(function(req, res, next) {
@@ -91,8 +97,7 @@ async function fetch_credentials(s3, filename) {
       console.log("cred file ", filename, data.Body);
       return data.Body;
     }
-  })
-  .send();
+  }).promise();
   console.log(uploadPromise);
   return uploadPromise;
 
@@ -125,6 +130,7 @@ const updateDBHelper = async (form_rows) => {
 }
 
 const updateDB = async () => {
+  console.log("collector test in GET", collector);
   const form_rows = await collector.get_records().then((data)=>{
     return data;
   })
