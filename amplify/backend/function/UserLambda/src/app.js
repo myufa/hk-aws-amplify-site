@@ -46,8 +46,15 @@ var app = express()
 app.use(bodyParser.json())
 app.use(awsServerlessExpressMiddleware.eventContext())
 
+// declare s3 object and obtain google auth
+var s3 = new AWS.S3();
+const googleCredentials = fetch_credentials(s3, "credentials").then(data=> {return data});
+const googleToken = fetch_credentials(s3, "token").then(data=> {return data});
+setTimeout(()=>{console.log("fuck me")}, 3000);
+console.log("google verify check", googleCredentials, googleToken);
 // declare a new collector
-var collector = new formData();
+var collector = new formData(googleCredentials, googleToken);
+
 
 // Enable CORS for all methods
 app.use(function(req, res, next) {
@@ -65,6 +72,30 @@ const convertUrlType = (param, type) => {
     default:
       return param;
   }
+}
+
+
+async function fetch_credentials(s3, filename) {
+  var params = {
+    Bucket: "hkdb-auth140118-hk",
+    Key:  filename + ".json",
+    ResponseContentType: 'application/json'
+  };
+  console.log("Entered fetch_credentials")
+  const uploadPromise = await s3.getObject(params, (err, data)=>{
+    if(err){
+      console.log(err);
+      return err;
+    }
+    else {
+      console.log("cred file ", filename, data.Body);
+      return data.Body;
+    }
+  })
+  .send();
+  console.log(uploadPromise);
+  return uploadPromise;
+
 }
 
 const updateDBHelper = async (form_rows) => {
@@ -108,12 +139,14 @@ const updateDB = async () => {
     } else {      return data.Items    }
   }).promise(); 
   if(!Array.isArray(db_rows_prom.Items) || !db_rows_prom.Items.length){
-    print("updateDB check", form_rows[form_rows.length - 1]);
+    console.log("updateDB check", form_rows[form_rows.length - 1]);
     await updateDBHelper(form_rows);
     return "No data in db, updated from form";
   }
   const db_rows = db_rows_prom.Items;
   const last_db_date = db_rows[db_rows.length - 1].id;
+  console.log("[form db] date check ", form_rows[form_rows.length - 1][2], last_form_date, db_rows[db_rows.length - 1].name, last_db_date)
+  console.log("[form db] date check ", form_rows[form_rows.length - 1][2], unixToGoogle(last_form_date), db_rows[db_rows.length - 1].name, unixToGoogle(last_db_date))
   if (last_form_date > last_db_date){
     await updateDBHelper(form_rows);
     return "data in db did not include most recent, updated from form";
@@ -147,39 +180,6 @@ app.get("/form-data", (req, res)=>{
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 });
-
-
-// app.get(path + hashKeyPath, function(req, res) {
-//   var condition = {}
-//   condition[partitionKeyName] = {
-//     ComparisonOperator: 'EQ'
-//   }
-
-//   if (userIdPresent && req.apiGateway) {
-//     condition[partitionKeyName]['AttributeValueList'] = [req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH ];
-//   } else {
-//     try {
-//       condition[partitionKeyName]['AttributeValueList'] = [ convertUrlType(req.params[partitionKeyName], partitionKeyType) ];
-//     } catch(err) {
-//       res.statusCode = 500;
-//       res.json({error: 'Wrong column type ' + err});
-//     }
-//   }
-
-//   let queryParams = {
-//     TableName: tableName,
-//     KeyConditions: condition
-//   }
-
-//   dynamodb.query(queryParams, (err, data) => {
-//     if (err) {
-//       res.statusCode = 500;
-//       res.json({error: 'Could not load items: ' + err});
-//     } else {
-//       res.json(data.Items);
-//     }
-//   });
-// });
 
 /*****************************************
  * HTTP Get method for get single object *

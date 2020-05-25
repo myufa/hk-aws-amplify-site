@@ -5,7 +5,7 @@ const find_row_index = require('./utils').find_row_index
 const googleToUnix = require('./utils').googleToUnix
 const unixToGoogle = require('./utils').unixToGoogle
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -72,86 +72,13 @@ function getNewToken(oAuth2Client, callback) {
   });
 }
 
-/**
- * Prints the names and majors of students in a sample spreadsheet:
- * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
- * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
- */
-function fechtData(auth) {
-  const sheets = google.sheets({version: 'v4', auth});
-  sheets.spreadsheets.values.get({
-    spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
-    range: 'Form Responses 1!A2:G',
-  }, (err, res) => {
-    if (err) return console.log('The API returned an error: ' + err);
-    const rows = res.data.values;
-    if (rows.length) {
-      console.log('Name, University:');
-      // Print columns A and E, which correspond to indices 0 and 4.
-      rows.map((row) => {
-        console.log(`${row[2]}, ${row[4]}`);
-      });
-    } else {
-      console.log('No data found.');
-    }
-  });
-}
-
-
-// const collector = async () => {
-//   const creds = fs.readFileSync('credentials.json');
-//   const credentials = JSON.parse(creds);
-//   const client_secret = credentials.web.client_secret;
-//   const client_id =  credentials.web.client_id;
-//   const redirect_uri = "https://google.com"; // to receive code in url
-
-//   const oAuth2Client = new google.auth.OAuth2(
-//       client_id, client_secret, redirect_uri);
-//   console.log("oAuth2Client", oAuth2Client);
-//   // Check if we have previously stored a token.
-//   var auth_token = fs.readFileSync(TOKEN_PATH);
-//   if (!auth_token){
-//       auth_token = getNewToken(oAuth2Client, callback);
-//   }
-//   oAuth2Client.setCredentials(JSON.parse(auth_token));
-//   const auth = oAuth2Client;
-//   console.log(auth);
-//   const sheets = google.sheets({version: 'v4', auth});
-//   console.log("sheets", sheets);
-//   const res = await sheets.spreadsheets.values.get({
-//     spreadsheetId: '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw',
-//     range: 'Form Responses 1!A2:G',
-//   })
-//   .then((res)=> {
-//     console.log("then block");
-//     console.log("res", res);
-//     const rows = res.data.values;
-//     console.log("print-test");
-//     console.log(res);
-//     console.log("rows.length", rows.length);
-//     console.log("rows", rows);
-//     if (rows.length) {
-//       console.log('serving formData');
-//       console.log(rows)
-//       return res
-//     } else {
-//       console.log('No data found.');
-//       throw(Error('No data found.')) 
-//     }
-//   })
-//   .catch((err)=>{
-//     console.log('The API returned an error: ');
-//   });
-//   return res.data.values;
-// }
-
 
 class collector {
-  constructor(){
+  constructor(credentials, token){
     this.spreadsheetId = '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw'
     this.sheetId = '1063414610'
     const creds = fs.readFileSync('credentials.json');
-    const credentials = JSON.parse(creds);
+    // const credentials = JSON.parse(creds);
     const client_secret = credentials.web.client_secret;
     const client_id =  credentials.web.client_id;
     const redirect_uri = "https://google.com"; // to receive code in url
@@ -159,7 +86,8 @@ class collector {
     const oAuth2Client = new google.auth.OAuth2(
         client_id, client_secret, redirect_uri);
     // Check if we have previously stored a token.
-    var auth_token = fs.readFileSync(TOKEN_PATH);
+    //var auth_token = fs.readFileSync(TOKEN_PATH);
+    var auth_token = token;
     if (!auth_token){
         auth_token = getNewToken(oAuth2Client, callback);
     }

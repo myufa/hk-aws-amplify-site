@@ -26,16 +26,14 @@ function unixToGoogle(timestamp) {
     var datetime = datestr.toLocaleString()
     const to24hr = datestr => {
         var time = datestr.substring(10)
-        console.log("time check", datestr, time)
         var PM = time.match('PM') ? true : false
         time = time.split(':')
         var min = time[1]
-        
-        if (PM) {
-            var hour = 12 + parseInt(time[0],10)
+        var hour = parseInt(time[0],10)
+        if (PM && hour !== 12) {
+            hour += 12
             var sec = time[2].replace('PM', '')
         } else {
-            var hour = time[0]
             var sec = time[2].replace('AM', '')       
         }
         
@@ -50,10 +48,13 @@ function unixToGoogle(timestamp) {
  * @param {String} timestamp the ISO 8601 time number, miliseconds from origin.
  */
 function find_row_index(rows, timestamp) {
-    const googleTime = unixToGoogle(timestamp).trim();
+    // const googleTime = unixToGoogle(timestamp).trim();
     // search for row index of timestamp
+    console.log("rows findowindex", rows)
+    console.log("~~~Finding row index~~~")
     for (i = 0; i < rows.length; ++i){
-        if (rows[i][0].trim() === googleTime) {
+        console.log("query timestamp: ", timestamp, " row timestamp ", rows[i][0], googleToUnix(rows[i][0].trim()),  timestamp === googleToUnix(rows[i][0].trim()));
+        if (googleToUnix(rows[i][0].trim()) === timestamp) {
             return i + 1;
         }
     }  

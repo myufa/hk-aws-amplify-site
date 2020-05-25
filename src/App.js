@@ -27,10 +27,12 @@ class App extends Component {
     this.setState({ [id]: event.target.value });  
   };
   handleSubmit = async event => {    
-    event.preventDefault();    
+    event.preventDefault();   
+    var d = new Date();
+    d.setHours(d.getHours() - 4);
     await API.post("UserApi", "/items", {      
       body: {        
-        id: Date.now(),        
+        id: d.getTime(),        
         name: this.state.name,        
         content: this.state.content      
       }    
@@ -102,27 +104,4 @@ class App extends Component {
   }
 }
 
-/*{this.fetchFormData()}*/
-{/* <table>
-          <tr> <th>Timestamp</th> <th>Email Address</th> <th>First name</th> <th>Last name</th> <th>Which university do you attend?</th> <th>What year are you?</th> <th>Why are you interested in becoming a member of HumanKind?</th> </tr>
-          {
-          this.fetchFormData().map((row)=>{
-            return (
-              <tr>
-                {row.map((item)=>{
-                  return (
-                    <td>item</td>
-                  );
-                })}
-              </tr>
-            );
-          })
-          }
-        </table> */}
-
-
-
-
-//<AmplifySignOut />
 export default withAuthenticator(App)
-//export default App;
