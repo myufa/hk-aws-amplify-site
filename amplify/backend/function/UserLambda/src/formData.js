@@ -74,7 +74,7 @@ function getNewToken(oAuth2Client, callback) {
 
 
 class collector {
-  async constructor(credentials, token){
+  constructor(credentials, token){
     this.spreadsheetId = '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw'
     this.sheetId = '1063414610'
     const creds = fs.readFileSync('credentials.json');
@@ -91,7 +91,8 @@ class collector {
     if (!auth_token){
         auth_token = getNewToken(oAuth2Client, callback);
     }
-    oAuth2Client.setCredentials(JSON.parse(auth_token));
+    console.log("token check", auth_token);
+    oAuth2Client.setCredentials(auth_token);
     const auth = oAuth2Client;
     this.auth = auth;
     this.sheets = google.sheets({version: 'v4', auth});

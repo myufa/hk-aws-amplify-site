@@ -51,7 +51,7 @@ var s3 = new AWS.S3();
 
 
 
-// Enable CORS for all methods
+// Enable CORS for all methods .
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
@@ -83,12 +83,12 @@ async function fetch_credentials(s3, filename) {
       return err;
     }
     else {
-      console.log("cred file ", filename, data.Body);
-      return data.Body;
+      console.log("cred file ", filename, data.Body.toString('utf-8'), typeof(data.Body.toString('utf-8')));
+      return JSON.parse(data.Body.toString('utf-8'));
     }
   }).promise();
-  console.log(uploadPromise);
-  return uploadPromise;
+  console.log("uploadPromise", uploadPromise, uploadPromise.Body, " json parse: ", JSON.parse(uploadPromise.Body.toString('utf-8')));
+  return JSON.parse(uploadPromise.Body.toString('utf-8'));
 
 }
 
@@ -121,12 +121,14 @@ const updateDBHelper = async (form_rows) => {
 const updateDB = async () => {
 
   const collector = await fetch_credentials(s3, "credentials")
-  .then(googleCredentials=> {
-    var googleAuth = fetch_credentials(s3, "token")
+  .then(async googleCredentials=> {
+    var googleAuth = await fetch_credentials(s3, "token")
     .then(googleToken=> {
       console.log("Google auth check in prom: ", googleCredentials, googleToken)
       return [googleCredentials, googleToken];
-    });
+    })
+    console.log("Google auth check post: ", googleAuth);
+    return googleAuth;
   })
   .then(googleAuth=>{
     return new formData(googleAuth[0], googleAuth[1]);
@@ -178,7 +180,7 @@ app.get(path, async function(req, res) {
 });
 
 
-app.get("/form-data", (req, res)=>{
+app.get("/form-data", async (req, res)=>{
   // declare collector
   const collector = await fetch_credentials(s3, "credentials")
   .then(googleCredentials=> {
@@ -323,8 +325,8 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res
 
   // declare collector
   const collector = await fetch_credentials(s3, "credentials")
-  .then(googleCredentials=> {
-    var googleAuth = fetch_credentials(s3, "token")
+  .then(async googleCredentials=> {
+    var googleAuth = await fetch_credentials(s3, "token")
     .then(googleToken=> {
       console.log("Google auth check in prom: ", googleCredentials, googleToken)
       return [googleCredentials, googleToken];
@@ -333,6 +335,8 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res
   .then(googleAuth=>{
     return new formData(googleAuth[0], googleAuth[1]);
   });
+
+  console.log("collector test in GET", collector);
   
   await collector.delete_records(params[partitionKeyName])
   .catch(err => {
