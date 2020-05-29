@@ -108,6 +108,7 @@ const updateDBHelper = async (form_rows) => {
       })
     }
   }
+  console.log("putItemParams, ", util.inspect(putItemParams, {showHidden: false, depth: null}))
   dynamodb.batchWrite(putItemParams, (err, data) => {
     if(err) {
       console.log("Batchwrite error", err);
@@ -330,7 +331,9 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res
     .then(googleToken=> {
       console.log("Google auth check in prom: ", googleCredentials, googleToken)
       return [googleCredentials, googleToken];
-    });
+    })
+    console.log("Google auth check post: ", googleAuth);
+    return googleAuth;
   })
   .then(googleAuth=>{
     return new formData(googleAuth[0], googleAuth[1]);
