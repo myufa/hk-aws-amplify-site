@@ -158,7 +158,7 @@ const updateDB = async () => {
   const last_db_date = db_rows[db_rows.length - 1].id;
   console.log("[form db] date check ", form_rows[form_rows.length - 1][2], last_form_date, db_rows[db_rows.length - 1].name, last_db_date)
   console.log("[form db] date check ", form_rows[form_rows.length - 1][2], unixToGoogle(last_form_date), db_rows[db_rows.length - 1].name, unixToGoogle(last_db_date))
-  if (> last_form_date last_db_date){
+  if (last_form_date > last_db_date){
     await updateDBHelper(form_rows);
     return "data in db did not include most recent, updated from form";
   }
