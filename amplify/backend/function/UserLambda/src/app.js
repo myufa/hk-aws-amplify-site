@@ -323,6 +323,7 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res
       res.json({error: 'Wrong column type ' + err});
     }
   }
+  // comment
 
   // declare collector
   const collector = await fetch_credentials(s3, "credentials")
