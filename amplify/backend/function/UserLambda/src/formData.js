@@ -77,7 +77,6 @@ class collector {
   constructor(credentials, token){
     this.spreadsheetId = '1OZZIZpuRxGbTKfBVGWh1iYK4cCB-6J42a4-4v8D_Mnw'
     this.sheetId = '1063414610'
-    const creds = fs.readFileSync('credentials.json');
     // const credentials = JSON.parse(creds);
     const client_secret = credentials.web.client_secret;
     const client_id =  credentials.web.client_id;
