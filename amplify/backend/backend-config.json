@@ -3,21 +3,6 @@
 		"UserTable": {
 			"service": "DynamoDB",
 			"providerPlugin": "awscloudformation"
-		},
-		"hkdbStore": {
-			"service": "S3",
-			"providerPlugin": "awscloudformation",
-			"dependsOn": [
-				{
-					"category": "function",
-					"resourceName": "UserLambda",
-					"attributes": [
-						"Name",
-						"Arn",
-						"LambdaExecutionRole"
-					]
-				}
-			]
 		}
 	},
 	"function": {
